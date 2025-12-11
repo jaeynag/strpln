@@ -27,6 +27,7 @@
       padding: 20px;
       border-radius: 10px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      position: relative; /* 버전 표시용 */
     }
     h1 {
       margin: 0 0 20px;
@@ -119,6 +120,13 @@
       font-size: 15px;
       margin-bottom: 16px;
     }
+    .version-label {
+      position: absolute;
+      right: 8px;
+      bottom: 8px;
+      font-size: 11px;
+      color: #999;
+    }
     @media (max-width: 480px) {
       .ox-btn {
         width: 80px;
@@ -173,6 +181,9 @@
       <button class="btn secondary small" id="btn-back">메인 화면으로</button>
     </div>
   </div>
+
+  <!-- 버전 표시 (JS에서 자동으로 채움) -->
+  <div id="version-label" class="version-label"></div>
 </div>
 
 <!-- 오답 팝업 -->
@@ -199,7 +210,6 @@
         throw new Error("JSON이 배열 형식이 아니다.");
       }
 
-      // 파이썬 버전과 같은 형식:
       // OX: {question, answer:"O"/"X", subject?}
       // MC: {question, type:"MC", choices:[..], answer_index:int, subject?}
       questions = data
@@ -365,6 +375,8 @@
   const wrongOverlay = document.getElementById("wrong-overlay");
   const wrongPopupMessage = document.getElementById("wrong-popup-message");
   const wrongPopupClose = document.getElementById("wrong-popup-close");
+
+  const versionLabel = document.getElementById("version-label");
 
   let currentList = [];
   let currentIndex = 0;
@@ -591,9 +603,21 @@
     });
   });
 
-  // 페이지 로드 시 문제 파일 먼저 로딩
+  // 페이지 로드 시 문제 파일 먼저 로딩 + 버전 표시 세팅
   window.addEventListener("load", () => {
     loadQuestions();
+
+    if (versionLabel) {
+      const d = new Date(document.lastModified);
+      if (!isNaN(d.getTime())) {
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, "0");
+        const dd = String(d.getDate()).padStart(2, "0");
+        versionLabel.textContent = `v${yyyy}.${mm}.${dd}`;
+      } else {
+        versionLabel.textContent = "v(unknown)";
+      }
+    }
   });
 </script>
 </body>
