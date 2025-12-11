@@ -146,7 +146,8 @@
 <div id="wrong-overlay" class="hidden">
   <div id="wrong-popup">
     <div id="wrong-popup-message">틀렸어 짜식아~</div>
-    <button class="btn small" id="wrong-popup-close">다시 풀기</button>
+    <!-- 버튼 클릭 시 바로 hideWrongPopup 호출 -->
+    <button class="btn small" onclick="hideWrongPopup()">다시 풀기</button>
   </div>
 </div>
 
@@ -289,7 +290,6 @@
 
   const wrongOverlay = document.getElementById("wrong-overlay");
   const wrongPopupMessage = document.getElementById("wrong-popup-message");
-  const wrongPopupClose = document.getElementById("wrong-popup-close");
 
   let currentList = [];
   let currentIndex = 0;
@@ -382,6 +382,11 @@
     wrongOverlay.classList.add("hidden");
   }
 
+  // 오버레이 바깥 클릭 시 닫기
+  wrongOverlay.addEventListener("click", (e) => {
+    if (e.target === wrongOverlay) hideWrongPopup();
+  });
+
   // ================== 답변 처리 ==================
   function handleAnswer(userAnswer) {
     if (!currentList.length) return;
@@ -438,11 +443,6 @@
   btnO.addEventListener("click", () => handleAnswer("O"));
   btnX.addEventListener("click", () => handleAnswer("X"));
   btnReset.addEventListener("click", resetAllResults);
-
-  wrongPopupClose.addEventListener("click", hideWrongPopup);
-  wrongOverlay.addEventListener("click", (e) => {
-    if (e.target === wrongOverlay) hideWrongPopup();
-  });
 
   // 페이지 로드 시 문제 파일 먼저 로딩
   window.addEventListener("load", () => {
